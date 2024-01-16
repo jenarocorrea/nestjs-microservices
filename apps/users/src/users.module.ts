@@ -10,6 +10,7 @@ import { SqsConsumerService } from './sqs/sqs-consumer.module';
 import { SqsPollingService } from './sqs/sqs-polling.service';
 import { ScheduleModule } from '@nestjs/schedule';
 import { SqsScheduleService } from './sqs/sqs-schedule.service';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   controllers: [UsersController],
@@ -24,6 +25,7 @@ import { SqsScheduleService } from './sqs/sqs-schedule.service';
     ScheduleModule.forRoot(),
     DatabaseModule,
     SqsModule,
+    AuthModule,
     TypeOrmModule.forFeature([User]),
   ],
 })

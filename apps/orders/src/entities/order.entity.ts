@@ -5,12 +5,12 @@ export class Order {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column('text')
+  @Column({ length: 100 })
   details: string;
 
   @Column()
   userId: number;
 
-  @Column()
+  @Column({ length: 100 })
   shippingAddress: string;
 }

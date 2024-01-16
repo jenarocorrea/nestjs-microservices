@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-//import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
@@ -23,15 +23,32 @@ export class UsersService {
     });
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findAll(): Promise<User[]> {
+    return await this.usersRepository.find();
   }
 
-  // update(id: number, updateUserDto: UpdateUserDto) {
-  //   return `This action updates a #${id} user`;
-  // }
+  async update(
+    id: number,
+    updateUserDto: UpdateUserDto,
+  ): Promise<User | undefined> {
+    const user = await this.usersRepository.findOne({
+      where: { id },
+    });
+    if (!user) {
+      throw new Error('User not found');
+    }
+    const updatedUser = this.usersRepository.merge(user, updateUserDto);
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+    return await this.usersRepository.save(updatedUser);
+  }
+
+  async remove(id: number): Promise<void> {
+    const user = await this.usersRepository.findOne({
+      where: { id },
+    });
+    if (!user) {
+      throw new Error('User not found');
+    }
+    await this.usersRepository.remove(user);
   }
 }
