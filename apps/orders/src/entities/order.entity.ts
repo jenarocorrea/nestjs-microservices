@@ -11,5 +11,6 @@ export class Order {
   @Column()
   userId: number;
 
-  // Otras columnas como estado del pedido, fecha, etc., pueden ser añadidas aquí.
+  @Column()
+  shippingAddress: string;
 }

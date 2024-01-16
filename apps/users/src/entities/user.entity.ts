@@ -12,5 +12,5 @@ export class User {
   email: string;
 
   @Column({ length: 200 })
-  shippingAddress: string;
+  address: string;
 }

@@ -1,16 +1,17 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
-//import { UpdateOrderDto } from './dto/update-order.dto';
 import { Order } from './entities/order.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ClientProxy } from '@nestjs/microservices';
+import { SqsProducerService } from './sqs/sqs-producer.module';
 
 @Injectable()
 export class OrdersService {
   constructor(
     @InjectRepository(Order)
     private ordersRepository: Repository<Order>,
+    private sqsProducerService: SqsProducerService,
     @Inject('USERS_SERVICE') private usersClient: ClientProxy,
   ) {}
 
@@ -18,14 +19,24 @@ export class OrdersService {
     const user = await this.usersClient
       .send({ cmd: 'getUser' }, createOrderDto.userId)
       .toPromise();
+
     if (!user) {
       throw new Error('User not found');
     }
-    // Aquí puedes incluir lógica adicional, como añadir la dirección del usuario al pedido.
-    const newOrder = this.ordersRepository.create(createOrderDto);
-    return await this.ordersRepository.save(newOrder);
-  }
 
+    const newOrder = this.ordersRepository.create(createOrderDto);
+    newOrder.shippingAddress = user.address;
+    const savedOrder = await this.ordersRepository.save(newOrder);
+
+    // Usar SqsProducerService para enviar mensaje a SQS
+    await this.sqsProducerService.sendMessage({
+      orderId: savedOrder.id,
+      user: user.name,
+      details: createOrderDto.details,
+    });
+
+    return savedOrder;
+  }
   async findOne(id: number): Promise<Order | undefined> {
     return await this.ordersRepository.findOne({
       where: { id },
