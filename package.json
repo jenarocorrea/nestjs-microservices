@@ -31,6 +31,8 @@
     "@nestjs/schedule": "^4.0.0",
     "@nestjs/typeorm": "^10.0.1",
     "aws-sdk": "^2.1536.0",
+    "keycloak-connect": "^23.0.4",
+    "nest-keycloak-connect": "^1.9.5",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "pg": "^8.11.3",

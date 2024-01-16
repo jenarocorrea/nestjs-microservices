@@ -6,8 +6,9 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Order } from './entities/order.entity';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { SqsModule } from './sqs/sqs-config.module';
+import { SqsModule } from './sqs/sqs.module';
 import { SqsProducerService } from './sqs/sqs-producer.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   controllers: [OrdersController],
@@ -16,6 +17,7 @@ import { SqsProducerService } from './sqs/sqs-producer.module';
     ConfigModule.forRoot({ isGlobal: true }),
     DatabaseModule,
     SqsModule,
+    AuthModule,
     TypeOrmModule.forFeature([Order]),
     ClientsModule.register([
       {

@@ -15,7 +15,7 @@ export class SqsPollingService {
     const params = {
       QueueUrl: queueUrl,
       MaxNumberOfMessages: 1,
-      WaitTimeSeconds: 60,
+      WaitTimeSeconds: 20,
     };
 
     try {
